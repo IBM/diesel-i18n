@@ -1,0 +1,12 @@
+target/
+node_modules/
+
+.idea/
+*.iml
+.vscode/
+.bloop/
+.metals/
+.bsp
+metals.sbt
+
+yarn.lock
