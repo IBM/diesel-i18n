@@ -3,3 +3,5 @@ scala:
   - 3.2.1
 
 
+script:
+  - sbt build lint test
