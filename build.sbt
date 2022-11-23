@@ -17,12 +17,13 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
 addCommandAlias("lintFix", "headerCreateAll;scalafixAll;fmt")
 addCommandAlias("testJVM", "diesel/test")
-addCommandAlias("testJS", "dieselJS/test")
+addCommandAlias("testJS", "diesel.js/test")
 
 lazy val commonSettings = Seq(
   organization  := "com.ibm.cloud.diesel",
   scalaVersion  := scalaVersion3,
-  versionScheme := Some("semver-spec")
+  versionScheme := Some("semver-spec"),
+  description   := "Utilities for localizing Diesel components."
 )
 
 lazy val copyrightSettings = Seq(
@@ -31,12 +32,22 @@ lazy val copyrightSettings = Seq(
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
+import xerial.sbt.Sonatype._
+lazy val sonatypeSettings = Seq(
+  sonatypeProjectHosting := Some(
+    GitHubHosting("IBM", "diesel-i18n", "agilecoderfrank@gmail.com")
+  ),
+  sonatypeCredentialHost := "s01.oss.sonatype.org",
+  sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
+)
+
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(dieselJVM, dieselJS, dieselI18nPlugin)
+  .aggregate(diesel.jvm, diesel.js, dieselI18nPlugin)
   .settings(commonSettings)
   .settings(
-    name := "diesel-i18n-root"
+    name           := "diesel-i18n-root",
+    publish / skip := true
   )
   .settings(copyrightSettings)
 
@@ -45,6 +56,7 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("diesel-i18n"))
   .settings(commonSettings)
+  .settings(sonatypeSettings)
   .settings(
     name := "diesel-i18n"
   )
@@ -78,13 +90,11 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
     ThisBuild / semanticdbEnabled := true
   )
 
-lazy val dieselJS  = diesel.js
-lazy val dieselJVM = diesel.jvm
-
 lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .enablePlugins(SbtPlugin)
   .disablePlugins(ScalafixPlugin)
   .settings(commonSettings)
+  .settings(sonatypeSettings)
   .settings(
     name               := "diesel-i18n-plugin",
     scalaVersion       := "2.12.17",
