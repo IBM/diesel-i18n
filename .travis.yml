@@ -2,8 +2,20 @@ language: scala
 scala:
   - 3.2.1
 
-script:
-  - sbt build lint test
+before_install:
+  # for sbt-dynver
+  - git fetch --tags
+
+stages:
+  - name: test
+  - name: release
+    if: (tag IS present) AND NOT fork
+
+jobs:
+  include:
+    - script: sbt build lint test
+    - stage: release
+      script: sbt ci-release
 
 cache:
   directories:
