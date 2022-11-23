@@ -75,8 +75,9 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
       "-language:existentials"
     ),
     libraryDependencies ++= Seq(
-      "com.lihaoyi"   %%% "sourcecode" % "0.3.0",
-      "org.scalameta" %%% "munit"      % "1.0.0-M7" % Test
+      "com.lihaoyi"     %%% "sourcecode"   % "0.3.0",
+      "io.github.frawa" %%% "inline-files" % "0.5.2",
+      "org.scalameta"   %%% "munit"        % "1.0.0-M7" % Test
     ),
     Test / fork        := false,
     Test / logBuffered := false,
