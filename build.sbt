@@ -45,6 +45,7 @@ lazy val root: Project = project
   .in(file("."))
   .aggregate(diesel.jvm, diesel.js, dieselI18nPlugin)
   .settings(commonSettings)
+  .settings(sonatypeSettings)
   .settings(
     name           := "diesel-i18n-root",
     publish / skip := true
