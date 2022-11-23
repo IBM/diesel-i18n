@@ -22,7 +22,7 @@ import java.io.{ByteArrayInputStream, InputStreamReader}
 object Loader {
 
   def loadProperties(content: String): Option[Map[String, MessageFormat]] = {
-    import scala.jdk.CollectionConverters.*
+    import scala.jdk.CollectionConverters._
     val result =
       Try {
         val properties = new java.util.Properties()
