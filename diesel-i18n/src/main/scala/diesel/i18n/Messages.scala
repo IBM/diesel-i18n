@@ -82,7 +82,7 @@ object Messages {
     val missing       = defined.keySet
       .flatMap { lang =>
         used.flatMap(key =>
-          if resolver(lang)(key).isDefined then
+          if (resolver(lang)(key).isDefined)
             None
           else
             Some(MissingMessage(lang, key))
@@ -110,7 +110,7 @@ object Messages {
 }
 
 abstract class Messages {
-  import Messages.*
+  import Messages._
 
   protected def load(): Map[Lang, Map[String, MessageFormat]]
 
@@ -126,33 +126,33 @@ abstract class Messages {
     Messages.checkConsistency(this.resolutions(), Resolver(loaded), defined)
   }
 
-  protected def msg0(using key: sourcecode.Name): Msg0 = msg0(Resolution(fieldKey(key)))
-  protected def msg0(resolution: Resolution): Msg0     = Msg0(collect(resolution.withArity(0)))
+  protected def msg0(implicit key: sourcecode.Name): Msg0 = msg0(Resolution(fieldKey(key)))
+  protected def msg0(resolution: Resolution): Msg0        = Msg0(collect(resolution.withArity(0)))
 
-  protected def msg1[T](using key: sourcecode.Name): Msg1[T] = msg1(Resolution(fieldKey(key)))
-  protected def msg1[T](resolution: Resolution): Msg1[T]     = Msg1(collect(resolution.withArity(1)))
+  protected def msg1[T](implicit key: sourcecode.Name): Msg1[T] = msg1(Resolution(fieldKey(key)))
+  protected def msg1[T](resolution: Resolution): Msg1[T]        = Msg1(collect(resolution.withArity(1)))
 
-  protected def msg2[T1, T2](using key: sourcecode.Name): Msg2[T1, T2] =
+  protected def msg2[T1, T2](implicit key: sourcecode.Name): Msg2[T1, T2] =
     msg2(Resolution(fieldKey(key)))
-  protected def msg2[T1, T2](resolution: Resolution): Msg2[T1, T2]     =
+  protected def msg2[T1, T2](resolution: Resolution): Msg2[T1, T2]        =
     Msg2(collect(resolution.withArity(2)))
 
-  protected def msg3[T1, T2, T3](using key: sourcecode.Name): Msg3[T1, T2, T3] =
+  protected def msg3[T1, T2, T3](implicit key: sourcecode.Name): Msg3[T1, T2, T3] =
     msg3(Resolution(fieldKey(key)))
-  protected def msg3[T1, T2, T3](resolution: Resolution): Msg3[T1, T2, T3]     =
+  protected def msg3[T1, T2, T3](resolution: Resolution): Msg3[T1, T2, T3]        =
     Msg3(collect(resolution.withArity(3)))
 
-  protected def msg4[T1, T2, T3, T4](using key: sourcecode.Name): Msg4[T1, T3, T2, T4] =
+  protected def msg4[T1, T2, T3, T4](implicit key: sourcecode.Name): Msg4[T1, T3, T2, T4] =
     msg4(Resolution(fieldKey(key)))
-  protected def msg4[T1, T2, T3, T4](resolution: Resolution): Msg4[T1, T2, T3, T4]     =
+  protected def msg4[T1, T2, T3, T4](resolution: Resolution): Msg4[T1, T2, T3, T4]        =
     Msg4(collect(resolution.withArity(4)))
 
-  protected def plural[M <: Msg](msg: Resolution => M)(using key: sourcecode.Name): Plural[M] =
+  protected def plural[M <: Msg](msg: Resolution => M)(implicit key: sourcecode.Name): Plural[M] =
     Plural(fieldKey(key), msg)
-  protected def selfPlural(using key: sourcecode.Name): SelfPlural                            = SelfPlural(fieldKey(key))
+  protected def selfPlural(implicit key: sourcecode.Name): SelfPlural                            = SelfPlural(fieldKey(key))
 
-  def defaultToString[T]: T => String             = { (arg: T) => arg.toString }
-  def commaSeparatedToString[T]: Seq[T] => String = { (arg: Seq[T]) => arg.mkString(", ") }
+  def defaultToString[T]: T => String             = { arg: T => arg.toString }
+  def commaSeparatedToString[T]: Seq[T] => String = { arg: Seq[T] => arg.mkString(", ") }
   trait Msg {
     val resolution: Resolution
     protected def getIt(resolver: KeyResolver): MessageFormat = resolver(resolution.key)
@@ -163,61 +163,61 @@ abstract class Messages {
       ))
   }
 
-  case class Msg0 private[i18n] (resolution: Resolution) extends Msg {
-    def apply()(using resolver: KeyResolver): String = getIt(resolver)()
+  case class Msg0 private (resolution: Resolution) extends Msg {
+    def apply()(implicit resolver: KeyResolver): String = getIt(resolver)()
   }
 
-  case class Msg1[T] private[i18n] (resolution: Resolution, f: (T => String) = defaultToString)
+  case class Msg1[T] private (resolution: Resolution, f: (T => String) = defaultToString)
       extends Msg {
-    def apply(arg: T)(using resolver: KeyResolver): String = getIt(resolver)(f(arg))
-    def arg(f: T => String): Msg1[T]                       = this.copy(f = f)
+    def apply(arg: T)(implicit resolver: KeyResolver): String = getIt(resolver)(f(arg))
+    def arg(f: T => String): Msg1[T]                          = this.copy(f = f)
   }
 
-  case class Msg2[T1, T2] private[i18n] (
+  case class Msg2[T1, T2] private (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString
   ) extends Msg {
-    def apply(arg1: T1, arg2: T2)(using resolver: KeyResolver): String =
+    def apply(arg1: T1, arg2: T2)(implicit resolver: KeyResolver): String =
       getIt(resolver)(f1(arg1), f2(arg2))
-    def arg1(f: T1 => String): Msg2[T1, T2]                            = this.copy(f1 = f)
-    def arg2(f: T2 => String): Msg2[T1, T2]                            = this.copy(f2 = f)
+    def arg1(f: T1 => String): Msg2[T1, T2]                               = this.copy(f1 = f)
+    def arg2(f: T2 => String): Msg2[T1, T2]                               = this.copy(f2 = f)
   }
 
-  case class Msg3[T1, T2, T3] private[i18n] (
+  case class Msg3[T1, T2, T3] private (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString,
     f3: (T3 => String) = defaultToString
   ) extends Msg {
-    def apply(arg1: T1, arg2: T2, arg3: T3)(using resolver: KeyResolver): String =
+    def apply(arg1: T1, arg2: T2, arg3: T3)(implicit resolver: KeyResolver): String =
       getIt(resolver)(f1(arg1), f2(arg2), f3(arg3))
-    def arg1(f: T1 => String): Msg3[T1, T2, T3]                                  = this.copy(f1 = f)
-    def arg2(f: T2 => String): Msg3[T1, T2, T3]                                  = this.copy(f2 = f)
-    def arg3(f: T3 => String): Msg3[T1, T2, T3]                                  = this.copy(f3 = f)
+    def arg1(f: T1 => String): Msg3[T1, T2, T3]                                     = this.copy(f1 = f)
+    def arg2(f: T2 => String): Msg3[T1, T2, T3]                                     = this.copy(f2 = f)
+    def arg3(f: T3 => String): Msg3[T1, T2, T3]                                     = this.copy(f3 = f)
   }
 
-  case class Msg4[T1, T2, T3, T4] private[i18n] (
+  case class Msg4[T1, T2, T3, T4] private (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString,
     f3: (T3 => String) = defaultToString,
     f4: (T4 => String) = defaultToString
   ) extends Msg {
-    def apply(arg1: T1, arg2: T2, arg3: T3, arg4: T4)(using resolver: KeyResolver): String =
+    def apply(arg1: T1, arg2: T2, arg3: T3, arg4: T4)(implicit resolver: KeyResolver): String =
       getIt(resolver)(f1(arg1), f2(arg2), f3(arg3), f4(arg4))
-    def arg1(f: T1 => String): Msg4[T1, T2, T3, T4]                                        = this.copy(f1 = f)
-    def arg2(f: T2 => String): Msg4[T1, T2, T3, T4]                                        = this.copy(f2 = f)
-    def arg3(f: T3 => String): Msg4[T1, T2, T3, T4]                                        = this.copy(f3 = f)
-    def arg4(f: T4 => String): Msg4[T1, T2, T3, T4]                                        = this.copy(f4 = f)
+    def arg1(f: T1 => String): Msg4[T1, T2, T3, T4]                                           = this.copy(f1 = f)
+    def arg2(f: T2 => String): Msg4[T1, T2, T3, T4]                                           = this.copy(f2 = f)
+    def arg3(f: T3 => String): Msg4[T1, T2, T3, T4]                                           = this.copy(f3 = f)
+    def arg4(f: T4 => String): Msg4[T1, T2, T3, T4]                                           = this.copy(f4 = f)
   }
 
-  case class Plural[M <: Msg] private[i18n] (key: String, msg: Resolution => M) {
+  case class Plural[M <: Msg] private (key: String, msg: Resolution => M) {
     msg(Resolution(key))
     msg(Resolution(key + "_plural"))
 
     def apply(count: Int): M = {
-      if count == 1 then {
+      if (count == 1) {
         msg(Resolution(key + "_1").withFallback(key))
       } else {
         msg(Resolution(key + "_" + count).withFallback(key + "_plural"))
@@ -225,9 +225,9 @@ abstract class Messages {
     }
   }
 
-  case class SelfPlural private[i18n] (key: String) {
-    private val p: Plural[Msg1[Int]]                           = Plural(key, msg1(_))
-    def apply(count: Int)(using resolver: KeyResolver): String = {
+  case class SelfPlural private (key: String) {
+    private val p: Plural[Msg1[Int]]                              = Plural(key, msg1(_))
+    def apply(count: Int)(implicit resolver: KeyResolver): String = {
       p(count)(count)
     }
   }
@@ -238,7 +238,7 @@ abstract class Messages {
   private val allResolutions = collection.mutable.ArrayBuffer[Resolution]()
 
   private def collect(resolution: Resolution): Resolution = {
-    if !isIgnored(resolution.key) then allResolutions.append(resolution)
+    if (!isIgnored(resolution.key)) allResolutions.append(resolution)
     resolution
   }
 

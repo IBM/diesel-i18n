@@ -19,7 +19,7 @@ package diesel.i18n
 import scala.collection.mutable
 
 case class MessageFormat(segments: Seq[MessageFormat.Segment]) {
-  import MessageFormat.*
+  import MessageFormat._
   def apply(args: String*): String                      = {
     segments.foldLeft(new StringBuilder) {
       case (acc, ParameterSegment(i)) => args.lift(i).map(acc.append).getOrElse(acc)
@@ -28,7 +28,7 @@ case class MessageFormat(segments: Seq[MessageFormat.Segment]) {
   }
   def withArity(count: Int): Either[Int, MessageFormat] = {
     val actual = arity(this)
-    if actual <= count then
+    if (actual <= count)
       Right(this)
     else
       Left(actual)
@@ -57,44 +57,44 @@ object MessageFormat {
     val r          = "\\{\\d+}".r
     val parts      = r.findAllMatchIn(format)
     val paramParts = mutable.ArrayBuffer[(Int, Int)]()
-    for p <- parts do {
+    for (p <- parts) {
       var paramPart = true
       val start     = p.start
-      if start > 0 then {
+      if (start > 0) {
         val prevChar = format.charAt(start - 1)
-        if prevChar == '\'' then {
+        if (prevChar == '\'') {
           paramPart = false
           // look back again, might be escaped !
-          if start > 1 then {
+          if (start > 1) {
             val prevChar2 = format.charAt(start - 2)
-            if prevChar2 == '\'' then {
+            if (prevChar2 == '\'') {
               // escaped ! it's a param part
               paramPart = true
             }
           }
         }
       }
-      if paramPart then {
+      if (paramPart) {
         paramParts.addOne((p.start, p.end))
       }
     }
 
     val res =
-      if paramParts.isEmpty then {
+      if (paramParts.isEmpty) {
         Seq(TextSegment(format))
       } else {
         val segments = mutable.ArrayBuffer[Segment]()
         var lastEnd  = 0
-        for ((start, end), index) <- paramParts.zipWithIndex do {
+        for (((start, end), index) <- paramParts.zipWithIndex) {
           val textBefore = format.substring(lastEnd, start)
-          if textBefore.nonEmpty then {
+          if (textBefore.nonEmpty) {
             segments.addOne(TextSegment(textBefore))
           }
           val paramValue = format.substring(start + 1, end - 1)
           val paramIndex = paramValue.toInt
           segments.addOne(ParameterSegment(paramIndex))
           lastEnd = end
-          if index == paramParts.length - 1 && lastEnd < format.length then {
+          if (index == paramParts.length - 1 && lastEnd < format.length) {
             segments.addOne(TextSegment(format.substring(lastEnd)))
           }
         }
@@ -112,12 +112,12 @@ object MessageFormat {
 
   private def sanitizeDblQuotes(s: String): String = {
     val sb = new mutable.StringBuilder()
-    for (c, i) <- s.zipWithIndex do {
-      if c == '\'' then {
+    for ((c, i) <- s.zipWithIndex) {
+      if (c == '\'') {
         // eat unless escaped (look before)
-        if i > 0 then {
+        if (i > 0) {
           val prevChar = s.charAt(i - 1)
-          if prevChar == '\'' then {
+          if (prevChar == '\'') {
             sb.append('\'')
           }
         }
