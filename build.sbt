@@ -37,8 +37,8 @@ lazy val sonatypeSettings = Seq(
   sonatypeProjectHosting := Some(
     GitHubHosting("IBM", "diesel-i18n", "agilecoderfrank@gmail.com")
   ),
-  sonatypeCredentialHost := "s01.oss.sonatype.org",
-  sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
+  sonatypeCredentialHost := "oss.sonatype.org",
+  sonatypeRepository     := "https://oss.sonatype.org/service/local"
 )
 
 lazy val root: Project = project

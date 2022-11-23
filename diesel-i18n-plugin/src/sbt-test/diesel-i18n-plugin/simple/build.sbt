@@ -3,8 +3,7 @@ import diesel.i18n.I18nPlugin
 lazy val root = (project in file("."))
   .enablePlugins(I18nPlugin)
   .settings(
-    scalaVersion := "2.12.17",
-    version := "0.1",
+    scalaVersion  := "2.12.17",
     i18nClassName := "com.myco.myapp.MyI18n"
   )
 
@@ -18,4 +17,3 @@ lazy val root = (project in file("."))
 //  override val theMap: Map[String, String] = ??? // generated...
 //
 //}
-
