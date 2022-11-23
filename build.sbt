@@ -35,6 +35,7 @@ lazy val copyrightSettings = Seq(
 
 import xerial.sbt.Sonatype._
 lazy val sonatypeSettings = Seq(
+  sonatypeProfileName    := "com.ibm.cloud",
   sonatypeProjectHosting := Some(
     GitHubHosting("IBM", "diesel-i18n", "agilecoderfrank@gmail.com")
   ),
