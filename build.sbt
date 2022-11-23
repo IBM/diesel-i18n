@@ -43,7 +43,7 @@ lazy val sonatypeSettings = Seq(
 
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(diesel.jvm, diesel.js, dieselI18nPlugin)
+  .aggregate(diesel.jvm, diesel.js)
   .settings(commonSettings)
   .settings(sonatypeSettings)
   .settings(
@@ -89,24 +89,4 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(
     ThisBuild / semanticdbEnabled := true
-  )
-
-lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
-  .enablePlugins(SbtPlugin)
-  .disablePlugins(ScalafixPlugin)
-  .settings(commonSettings)
-  .settings(sonatypeSettings)
-  .settings(
-    name               := "diesel-i18n-plugin",
-    scalaVersion       := "2.12.17",
-    scriptedLaunchOpts := {
-      scriptedLaunchOpts.value ++
-        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
-    },
-    scriptedBufferLog  := false,
-    semanticdbEnabled  := false
-  )
-  .settings(copyrightSettings)
-  .settings(
-    (Compile / test) := scripted.toTask("").value
   )
