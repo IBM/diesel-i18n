@@ -20,7 +20,7 @@ addCommandAlias("testJVM", "diesel/test")
 addCommandAlias("testJS", "dieselJS/test")
 
 lazy val commonSettings = Seq(
-  organization  := "com.ibm.diesel",
+  organization  := "com.ibm.cloud.diesel",
   scalaVersion  := scalaVersion3,
   versionScheme := Some("semver-spec")
 )
