@@ -16,27 +16,24 @@
 
 package diesel.i18n
 
-object Lang extends Enumeration {
-  protected case class LangVal(lang: String) extends super.Val(lang)
+enum Lang(val lang: String) {
+  case EN   extends Lang("en")
+  case DE   extends Lang("de")
+  case ES   extends Lang("es")
+  case FR   extends Lang("fr")
+  case IT   extends Lang("it")
+  case JA   extends Lang("ja")
+  case PT   extends Lang("pt")
+  case ZH   extends Lang("zh")
+  case ZHTW extends Lang("zh_tw")
+}
 
-  import scala.language.implicitConversions
-  implicit def valueToLangVal(x: Value): LangVal = x.asInstanceOf[LangVal]
+object Lang {
 
-  // needs to be in sync with diesel-i18n-plugin's diesel.i18n.I18nGenerator
-  val EN: LangVal   = LangVal("en")
-  val DE: LangVal   = LangVal("de")
-  val ES: LangVal   = LangVal("es")
-  val FR: LangVal   = LangVal("fr")
-  val IT: LangVal   = LangVal("it")
-  val JA: LangVal   = LangVal("ja")
-  val PT: LangVal   = LangVal("pt")
-  val ZH: LangVal   = LangVal("zh")
-  val ZHTW: LangVal = LangVal("zh_tw")
-
-  def apply(lang: String): Option[Value] = values.find(_.lang == lang)
+  def apply(lang: String): Option[Lang] = Lang.values.find(_.lang == lang)
 
   // see https://tools.ietf.org/rfc/bcp/bcp47.txt
-  def fromNavigator(language: String): Option[Value] = {
+  def fromNavigator(language: String): Option[Lang] = {
     apply(language.toLowerCase)
       .orElse(apply(language.replace('-', '_').toLowerCase))
       .orElse(apply(language.split('-')(0).toLowerCase))

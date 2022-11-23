@@ -178,63 +178,64 @@ class MessagesTest extends FunSuite {
     given KeyResolver = MyMessages.keyResolver(DE)
     assertEquals("ä", MyMessages.encoded())
   }
-}
 
-object MyMessages extends Messages {
+  object MyMessages extends Messages {
 
-  import Messages.*
+    import Messages.*
 
-  val toto                               = msg0
-  val titi: Msg1[Int]                    = msg1[Int]
-  val customList: Msg1[Seq[Int]]         = msg1[Seq[Int]].arg(commaSeparatedToString)
-  val missing: Msg0                      = msg0
-  val `wrong.arity`                      = msg1[Int]
-  val plural0: Plural[Msg0]              = plural(msg0(_))
-  val plural2: Plural[Msg2[String, Int]] = plural(msg2(_))
-  val pluralBroken: Plural[Msg1[String]] = plural(msg1(_))
-  val simpleCountPlural: SelfPlural      = selfPlural
-  val encoded                            = msg0
+    val toto                               = msg0
+    val titi: Msg1[Int]                    = msg1[Int]
+    val customList: Msg1[Seq[Int]]         = msg1[Seq[Int]].arg(commaSeparatedToString)
+    val missing: Msg0                      = msg0
+    val `wrong.arity`                      = msg1[Int]
+    val plural0: Plural[Msg0]              = plural(msg0(_))
+    val plural2: Plural[Msg2[String, Int]] = plural(msg2(_))
+    val pluralBroken: Plural[Msg1[String]] = plural(msg1(_))
+    val simpleCountPlural: SelfPlural      = selfPlural
+    val encoded                            = msg0
 
-  override protected def load(): Map[Lang, Map[String, MessageFormat]] =
-    TestData.propertiesContent
-      .flatMap { case (k, v) =>
-        Lang(k).flatMap(lang => Loader.loadProperties(v).map((lang, _)))
-      }
-      .toMap
+    override protected def load(): Map[Lang, Map[String, MessageFormat]] =
+      TestData.propertiesContent
+        .flatMap { case (k, v) =>
+          Lang(k).flatMap(lang => Loader.loadProperties(v).map((lang, _)))
+        }
+        .toMap
 
-  override protected def newResolver(loaded: Map[Lang, Map[String, MessageFormat]])
-    : Messages.Resolver =
-    Resolver(loaded).withFallback(Lang.EN)
-}
+    override protected def newResolver(loaded: Map[Lang, Map[String, MessageFormat]])
+      : Messages.Resolver =
+      Resolver(loaded).withFallback(Lang.EN)
+  }
 
-object TestData {
-  import Lang.*
-  val propertiesContent: Map[String, String] = Map(
-    EN.lang -> """|
-                  |toto = my toto
-                  |titi = my titi {0}
-                  |customList = listing {0}
-                  |wrong.arity = boom {1}
-                  |plural0_plural = many bars
-                  |plural0_0 = no bars at all
-                  |plural0 = one bar
-                  |plural2_plural = many or no things {0} {1}
-                  |plural2 = one thing {0}
-                  |not.used = never
-                  |pluralBroken_plural = many {0}
-                  |pluralBroken = only one {13}
-                  |simpleCountPlural_plural = lots {0}
-                  |simpleCountPlural_2 = two
-                  |simpleCountPlural_1 = one
-                  |simpleCountPlural_0 = empty
-                  |simpleCountPlural = single
-                  |encoded = X
-                  |""".stripMargin,
-    DE.lang -> """|
-                  |toto = mein toto
-                  |plural0 = nur eine bar
-                  |encoded = ä
-                  |""".stripMargin
-    // issing.lang -> ""
-  )
+  object TestData {
+    import Lang.*
+    val propertiesContent: Map[String, String] = Map(
+      EN.lang -> """|
+                    |toto = my toto
+                    |titi = my titi {0}
+                    |customList = listing {0}
+                    |wrong.arity = boom {1}
+                    |plural0_plural = many bars
+                    |plural0_0 = no bars at all
+                    |plural0 = one bar
+                    |plural2_plural = many or no things {0} {1}
+                    |plural2 = one thing {0}
+                    |not.used = never
+                    |pluralBroken_plural = many {0}
+                    |pluralBroken = only one {13}
+                    |simpleCountPlural_plural = lots {0}
+                    |simpleCountPlural_2 = two
+                    |simpleCountPlural_1 = one
+                    |simpleCountPlural_0 = empty
+                    |simpleCountPlural = single
+                    |encoded = X
+                    |""".stripMargin,
+      DE.lang -> """|
+                    |toto = mein toto
+                    |plural0 = nur eine bar
+                    |encoded = ä
+                    |""".stripMargin
+      // issing.lang -> ""
+    )
+  }
+
 }

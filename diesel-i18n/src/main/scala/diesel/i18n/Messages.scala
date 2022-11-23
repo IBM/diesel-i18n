@@ -17,7 +17,6 @@
 package diesel.i18n
 
 object Messages {
-  type Lang        = Lang.Value
   private type Key = String
 
   private type ResolveFun    = Lang => ResolveKeyFun
@@ -27,7 +26,7 @@ object Messages {
     def apply(lang: Lang): KeyResolver         = KeyResolver(resolve(lang))
     def withFallback(fallback: Lang): Resolver = Resolver(lang =>
       (key: String) => {
-        resolve(lang)(key).orElse(resolve(fallback)(key).map(_.withPrefix(s"[${fallback}]")))
+        resolve(lang)(key).orElse(resolve(fallback)(key).map(_.withPrefix(s"[${fallback.lang}]")))
       }
     )
   }
@@ -51,7 +50,10 @@ object Messages {
     def withFallback(fallback: String): Resolution = this.copy(fallback = Some(fallback))
   }
 
-  sealed trait Inconsistency
+  sealed trait Inconsistency {
+    val lang: Lang
+    val key: String
+  }
   case class MissingMessage(lang: Lang, key: String) extends Inconsistency
   case class UnusedMessage(lang: Lang, key: String)  extends Inconsistency
   case class ArityMismatch(lang: Lang, key: String, expected: Int, actual: Int)
@@ -70,6 +72,8 @@ object Messages {
   ): Seq[Inconsistency] = {
     val used = resolutions.flatMap(resolution => Seq(resolution.key) ++ resolution.fallback.toSeq)
 
+    val sortBy = (m: Inconsistency) => (m.lang.ordinal, m.key)
+
     val unused        = defined
       .map {
         case (lang, keys) => (lang, keys -- used)
@@ -78,7 +82,7 @@ object Messages {
         case (lang, keys) => keys.filterNot(isIgnored).map(key => UnusedMessage(lang, key))
       }
       .toSeq
-      .sortBy(m => (m.lang, m.key))
+      .sortBy(sortBy)
     val missing       = defined.keySet
       .flatMap { lang =>
         used.flatMap(key =>
@@ -89,7 +93,7 @@ object Messages {
         )
       }
       .toSeq
-      .sortBy(m => (m.lang, m.key))
+      .sortBy(sortBy)
     val arityMismatch = defined.keySet
       .flatMap { lang =>
         resolutions
@@ -103,7 +107,7 @@ object Messages {
           }
       }
       .toSeq
-      .sortBy(m => (m.lang, m.key))
+      .sortBy(sortBy)
 
     missing ++ arityMismatch ++ unused
   }
