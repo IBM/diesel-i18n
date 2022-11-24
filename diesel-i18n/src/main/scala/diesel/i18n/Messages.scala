@@ -111,6 +111,7 @@ object Messages {
 
 abstract class Messages {
   import Messages._
+  import MessageKey.messageKey
 
   protected def load(): Map[Lang, Map[String, MessageFormat]]
 
@@ -126,30 +127,30 @@ abstract class Messages {
     Messages.checkConsistency(this.resolutions(), Resolver(loaded), defined)
   }
 
-  protected def msg0(implicit key: sourcecode.Name): Msg0 = msg0(Resolution(fieldKey(key)))
-  protected def msg0(resolution: Resolution): Msg0        = Msg0(collect(resolution.withArity(0)))
+  protected def msg0(implicit key: MessageKey): Msg0 = msg0(Resolution(key.key))
+  protected def msg0(resolution: Resolution): Msg0   = Msg0(collect(resolution.withArity(0)))
 
-  protected def msg1[T](implicit key: sourcecode.Name): Msg1[T] = msg1(Resolution(fieldKey(key)))
-  protected def msg1[T](resolution: Resolution): Msg1[T]        = Msg1(collect(resolution.withArity(1)))
+  protected def msg1[T](implicit key: MessageKey): Msg1[T] = msg1(Resolution(key.key))
+  protected def msg1[T](resolution: Resolution): Msg1[T]   = Msg1(collect(resolution.withArity(1)))
 
-  protected def msg2[T1, T2](implicit key: sourcecode.Name): Msg2[T1, T2] =
-    msg2(Resolution(fieldKey(key)))
-  protected def msg2[T1, T2](resolution: Resolution): Msg2[T1, T2]        =
+  protected def msg2[T1, T2](implicit key: MessageKey): Msg2[T1, T2] =
+    msg2(Resolution(key.key))
+  protected def msg2[T1, T2](resolution: Resolution): Msg2[T1, T2]   =
     Msg2(collect(resolution.withArity(2)))
 
-  protected def msg3[T1, T2, T3](implicit key: sourcecode.Name): Msg3[T1, T2, T3] =
-    msg3(Resolution(fieldKey(key)))
-  protected def msg3[T1, T2, T3](resolution: Resolution): Msg3[T1, T2, T3]        =
+  protected def msg3[T1, T2, T3](implicit key: MessageKey): Msg3[T1, T2, T3] =
+    msg3(Resolution(key.key))
+  protected def msg3[T1, T2, T3](resolution: Resolution): Msg3[T1, T2, T3]   =
     Msg3(collect(resolution.withArity(3)))
 
-  protected def msg4[T1, T2, T3, T4](implicit key: sourcecode.Name): Msg4[T1, T3, T2, T4] =
-    msg4(Resolution(fieldKey(key)))
-  protected def msg4[T1, T2, T3, T4](resolution: Resolution): Msg4[T1, T2, T3, T4]        =
+  protected def msg4[T1, T2, T3, T4](implicit key: MessageKey): Msg4[T1, T3, T2, T4] =
+    msg4(Resolution(key.key))
+  protected def msg4[T1, T2, T3, T4](resolution: Resolution): Msg4[T1, T2, T3, T4]   =
     Msg4(collect(resolution.withArity(4)))
 
-  protected def plural[M <: Msg](msg: Resolution => M)(implicit key: sourcecode.Name): Plural[M] =
-    Plural(fieldKey(key), msg)
-  protected def selfPlural(implicit key: sourcecode.Name): SelfPlural                            = SelfPlural(fieldKey(key))
+  protected def plural[M <: Msg](msg: Resolution => M)(implicit key: MessageKey): Plural[M] =
+    Plural(key.key, msg)
+  protected def selfPlural(implicit key: MessageKey): SelfPlural                            = SelfPlural(key.key)
 
   def defaultToString[T]: T => String             = { arg: T => arg.toString }
   def commaSeparatedToString[T]: Seq[T] => String = { arg: Seq[T] => arg.mkString(", ") }
@@ -231,9 +232,6 @@ abstract class Messages {
       p(count)(count)
     }
   }
-
-  private def fieldKey(enclosing: sourcecode.Name): String =
-    enclosing.value
 
   private val allResolutions = collection.mutable.ArrayBuffer[Resolution]()
 
