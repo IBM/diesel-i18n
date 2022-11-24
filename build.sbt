@@ -48,11 +48,11 @@ lazy val root: Project = project
   .aggregate(diesel.jvm, diesel.js, dieselI18nPlugin)
   .settings(commonSettings)
   .settings(sonatypeSettings)
+  .settings(copyrightSettings)
   .settings(
     name           := "diesel-i18n-root",
     publish / skip := true
   )
-  .settings(copyrightSettings)
 
 lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
@@ -60,10 +60,10 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   .in(file("diesel-i18n"))
   .settings(commonSettings)
   .settings(sonatypeSettings)
+  .settings(copyrightSettings)
   .settings(
     name := "diesel-i18n"
   )
-  .settings(copyrightSettings)
   .settings(
     scalacOptions ++= Seq(
       // "-source:3.0",
@@ -99,6 +99,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .disablePlugins(ScalafixPlugin)
   .settings(commonSettings)
   .settings(sonatypeSettings)
+  .settings(copyrightSettings)
   .settings(
     name               := "diesel-i18n-plugin",
     scalaVersion       := "2.12.17",
@@ -109,7 +110,6 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
     scriptedBufferLog  := false,
     semanticdbEnabled  := false
   )
-  .settings(copyrightSettings)
   .settings(
     (Compile / test) := scripted.toTask("").value
   )
