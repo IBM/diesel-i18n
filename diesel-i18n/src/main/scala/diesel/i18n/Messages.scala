@@ -111,7 +111,7 @@ object Messages {
 
 abstract class Messages {
   import Messages._
-  import DeclaringSourceName.declaringSourceName
+  import DeclaringSourceName.given
 
   protected def load(): Map[Lang, Map[String, MessageFormat]]
 

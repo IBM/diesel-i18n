@@ -16,23 +16,27 @@
 
 package diesel.i18n
 
+import scala.quoted.Quotes
+import scala.quoted.Expr
+import scala.quoted.quotes
+
 case class DeclaringSourceName(name: String)
 
 object DeclaringSourceName {
   import scala.language.experimental.macros
 
-  implicit def declaringSourceName: DeclaringSourceName = macro declaringSourceNameImpl
+  inline given DeclaringSourceName =
+    ${ declaringSourceNameImpl }
 
-  private type Context = scala.reflect.macros.blackbox.Context
-  def declaringSourceNameImpl(c: Context): c.Expr[DeclaringSourceName] = {
-    import c.universe._
-    var owner = enclosingOwner(c)
-    while (owner.isSynthetic) {
+  private def declaringSourceNameImpl(using Quotes): Expr[DeclaringSourceName] = {
+    import quotes.reflect._
+    var owner             = Symbol.spliceOwner.owner
+    val isDeclaringSymbol = (s: Symbol) => s.isDefDef || s.isValDef
+    while (!isDeclaringSymbol(owner)) do {
       owner = owner.owner
     }
-    val name  = owner.name.decodedName.toString().trim()
-    c.Expr[DeclaringSourceName](q"""${c.prefix}($name)""")
+    val name              = owner.name.trim()
+    '{ DeclaringSourceName(${ Expr(name) }) }
   }
 
-  private def enclosingOwner(c: Context) = c.internal.enclosingOwner
 }
