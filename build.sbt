@@ -5,8 +5,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 import scala.sys.process._
 
-// val scalaVersion3 = "3.2.1"
-val scalaVersion2 = "2.13.10"
+val scalaVersion3 = "3.2.1"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
@@ -22,7 +21,7 @@ addCommandAlias("testJS", "diesel.js/test")
 
 lazy val commonSettings = Seq(
   organization  := "com.ibm.cloud.diesel",
-  scalaVersion  := scalaVersion2,
+  scalaVersion  := scalaVersion3,
   versionScheme := Some("semver-spec"),
   description   := "Utilities for localizing Diesel components."
 )
@@ -66,10 +65,10 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(
     scalacOptions ++= Seq(
-      // "-source:3.0",
+      "-source:3.0",
       // "-source:future-migration",
       // "-rewrite",
-      // "-new-syntax",
+      "-new-syntax",
       "-unchecked",
       "-deprecation",
       "-feature",
@@ -77,8 +76,8 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
       "-language:existentials"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang"  % "scala-reflect" % scalaVersion2,
-      "org.scalameta" %%% "munit"         % "1.0.0-M7" % Test
+      // "org.scala-lang"  % "scala-reflect" % scalaVersion2,
+      "org.scalameta" %%% "munit" % "1.0.0-M7" % Test
     ),
     Test / fork        := false,
     Test / logBuffered := false,
@@ -90,8 +89,7 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
     Test / scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
   .settings(
-    semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision
+    ThisBuild / semanticdbEnabled := true
   )
 
 lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))

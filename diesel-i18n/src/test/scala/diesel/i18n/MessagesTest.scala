@@ -19,82 +19,76 @@ package diesel.i18n
 import munit.FunSuite
 
 class MessagesTest extends FunSuite {
-  import Messages._
-  import Lang._
+  import Messages.*
+  import Lang.*
+
+  given KeyResolver = MyMessages.keyResolver(EN)
 
   test("first") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.toto(), "my toto")
     assertEquals(MyMessages.titi(13), "my titi 13")
   }
 
   test("with parameter") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.titi(13), "my titi 13")
   }
 
   test("with custom parameter") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.customList(Seq(13, 14)), "listing 13, 14")
   }
 
   test("fallback") {
-    implicit def de = MyMessages.keyResolver(DE)
+    given KeyResolver = MyMessages.keyResolver(DE)
     assertEquals(MyMessages.titi(13), "[en]my titi 13")
   }
 
   test("missing fallback message de") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.missing(), "[missing]#0")
   }
 
   test("missing fallback message") {
-    implicit def de = MyMessages.keyResolver(DE)
+    given KeyResolver = MyMessages.keyResolver(DE)
     assertEquals(MyMessages.missing(), "[missing]#0")
   }
 
   test("wrong arity") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.`wrong.arity`(13), "[wrong.arity]#1")
   }
 
   test("plurals") {
-    implicit def en = MyMessages.keyResolver(EN)
+    given KeyResolver = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.plural0(13)(), "many bars")
     assertEquals(MyMessages.plural0(1)(), "one bar")
     assertEquals(MyMessages.plural0(0)(), "no bars at all")
   }
 
   test("plurals de") {
-    implicit def de = MyMessages.keyResolver(DE)
+    given KeyResolver = MyMessages.keyResolver(DE)
     assertEquals(MyMessages.plural0(13)(), "[en]many bars")
     assertEquals(MyMessages.plural0(1)(), "nur eine bar")
     assertEquals(MyMessages.plural0(0)(), "[en]no bars at all")
   }
 
   test("plurals with parameters") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.plural2(13)("foo", 13), "many or no things foo 13")
     assertEquals(MyMessages.plural2(1)("gnu", 1313), "one thing gnu")
     assertEquals(MyMessages.plural2(0)("bar", 131313), "many or no things bar 131313")
   }
 
   test("plurals with parameters de") {
-    implicit def de = MyMessages.keyResolver(DE)
+    given KeyResolver = MyMessages.keyResolver(DE)
     assertEquals(MyMessages.plural2(13)("foo", 13), "[en]many or no things foo 13")
     assertEquals(MyMessages.plural2(1)("gnu", 1313), "[en]one thing gnu")
     assertEquals(MyMessages.plural2(0)("bar", 131313), "[en]many or no things bar 131313")
   }
 
   test("plurals with arity mismatch") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.pluralBroken(13)("foo"), "many foo")
     assertEquals(MyMessages.pluralBroken(1)("gnu"), "[pluralBroken]#1")
     assertEquals(MyMessages.pluralBroken(0)("bar"), "many bar")
   }
 
   test("self plurals") {
-    implicit def en = MyMessages.keyResolver(EN)
     assertEquals(MyMessages.simpleCountPlural(13), "lots 13")
     assertEquals(MyMessages.simpleCountPlural(1), "one")
     assertEquals(MyMessages.simpleCountPlural(2), "two")
@@ -176,14 +170,19 @@ class MessagesTest extends FunSuite {
   }
 
   test("messages encoding") {
-    assertEquals("X", MyMessages.encoded()(MyMessages.keyResolver(EN)))
-    assertEquals("ä", MyMessages.encoded()(MyMessages.keyResolver(DE)))
+    given KeyResolver = MyMessages.keyResolver(EN)
+    assertEquals("X", MyMessages.encoded())
+  }
+
+  test("messages encoding DE") {
+    given KeyResolver = MyMessages.keyResolver(DE)
+    assertEquals("ä", MyMessages.encoded())
   }
 }
 
 object MyMessages extends Messages {
 
-  import Messages._
+  import Messages.*
 
   val toto                               = msg0
   val titi: Msg1[Int]                    = msg1[Int]
@@ -209,7 +208,7 @@ object MyMessages extends Messages {
 }
 
 object TestData {
-  import Lang._
+  import Lang.*
   val propertiesContent: Map[String, String] = Map(
     EN.lang -> """|
                   |toto = my toto

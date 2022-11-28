@@ -19,7 +19,7 @@ package diesel.i18n
 import munit.FunSuite
 
 class MessageFormatTest extends FunSuite {
-  import MessageFormat._
+  import MessageFormat.*
 
   test("no parameters") {
     assertEquals(MessageFormat("toto"), MessageFormat(Seq(TextSegment("toto"))))
