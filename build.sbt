@@ -102,7 +102,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .settings(copyrightSettings)
   .settings(
     name               := "diesel-i18n-plugin",
-    scalaVersion       := "2.12.20",
+    scalaVersion       := "2.13.16",
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
