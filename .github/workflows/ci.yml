@@ -41,7 +41,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install sbt
       - name: Build and tests
-        run: sbt build lint test
+        run: sbt "build;lint;test"
 
   publish:
     runs-on: ubuntu-latest
