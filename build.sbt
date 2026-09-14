@@ -6,7 +6,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import scala.sys.process._
 
 // val scalaVersion3 = "3.2.1"
-val scalaVersion2 = "2.13.16"
+val scalaVersion2 = "2.13.18"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
@@ -59,13 +59,10 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang"  % "scala-reflect" % scalaVersion2,
-      "org.scalameta" %%% "munit"         % "1.1.1" % Test
+      "org.scalameta" %%% "munit"         % "1.3.6" % Test
     ),
     Test / fork        := false,
-    Test / logBuffered := false,
-    // see https://github.com/scalameta/munit/blob/main/junit-interface/src/main/java/munit/internal/junitinterface/JUnitRunner.java
-    // Test / testOptions += Tests.Argument("+l", "--summary=1")
-    Test / testOptions += Tests.Argument("--summary=1")
+    Test / logBuffered := false
   )
   .jsSettings(
     Test / scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
@@ -80,7 +77,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .disablePlugins(ScalafixPlugin)
   .settings(
     name               := "diesel-i18n-plugin",
-    scalaVersion       := "2.12.20",
+    scalaVersion       := "2.12.21",
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
