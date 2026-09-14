@@ -150,9 +150,9 @@ abstract class Messages {
 
   protected def plural[M <: Msg](msg: Resolution => M)(implicit
     key: DeclaringSourceName
-  ): Plural[M] =
+  ): Plural[M]                                                            =
     Plural(key.name, msg)
-  protected def selfPlural(implicit key: DeclaringSourceName): SelfPlural                     = SelfPlural(key.name)
+  protected def selfPlural(implicit key: DeclaringSourceName): SelfPlural = SelfPlural(key.name)
 
   def defaultToString[T]: T => String             = { arg: T => arg.toString }
   def commaSeparatedToString[T]: Seq[T] => String = { arg: Seq[T] => arg.mkString(", ") }
