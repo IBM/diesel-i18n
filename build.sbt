@@ -10,7 +10,7 @@ val scalaVersion2 = "2.13.18"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
-addCommandAlias("build", "compile")
+addCommandAlias("build", "compile;scripted")
 
 // dev convenience
 addCommandAlias("fmtCheck", "all scalafmtSbtCheck scalafmtCheckAll")
@@ -27,7 +27,7 @@ inThisBuild(Seq(
   description      := "Utilities for localizing Diesel components.",
   startYear        := Some(2021),
   organizationName := "The Diesel Authors",
-  licenses += ("Apache-2.0", new URI("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL())
+  licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 ))
 
 lazy val root: Project = project
@@ -58,8 +58,8 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
       "-language:existentials"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang"  % "scala-reflect" % scalaVersion2,
-      "org.scalameta" %%% "munit"         % "1.3.6" % Test
+      "org.scala-lang" % "scala-reflect" % scalaVersion2,
+      "org.scalameta" %% "munit"         % "1.3.6" % Test
     ),
     Test / fork        := false,
     Test / logBuffered := false
@@ -84,7 +84,4 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
     },
     scriptedBufferLog  := false,
     semanticdbEnabled  := false
-  )
-  .settings(
-    (Compile / test) := scripted.toTask("").value
   )
