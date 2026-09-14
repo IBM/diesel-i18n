@@ -31,7 +31,7 @@ object I18nPlugin extends AutoPlugin {
   object autoImport extends I18nKeys
   import autoImport._
 
-  override lazy val projectSettings: Seq[Setting[_]] = Seq(
+  override lazy val projectSettings: Seq[Setting[?]] = Seq(
     i18nDir       := baseDirectory.value / "src" / "main" / "i18n",
     i18nClassName := "",
     Compile / sourceGenerators += genI18Task.taskValue
