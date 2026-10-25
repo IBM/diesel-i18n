@@ -1,9 +1,9 @@
 import diesel.i18n.I18nPlugin
 
-lazy val root = (project in file("."))
+lazy val root = project.in(file("."))
   .enablePlugins(I18nPlugin)
   .settings(
-    scalaVersion  := "2.12.21",
+    scalaVersion  := "3.8.3",
     i18nClassName := "com.myco.myapp.MyI18n"
   )
 
