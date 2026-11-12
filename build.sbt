@@ -47,15 +47,13 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(
     scalacOptions ++= Seq(
-      // "-source:3.0",
-      // "-source:future-migration",
-      // "-rewrite",
-      // "-new-syntax",
       "-unchecked",
       "-deprecation",
       "-feature",
-      "-Xfatal-warnings",
-      "-language:existentials"
+      // "-Xfatal-warnings",
+      "-Wconf:cat=deprecation:i",
+      "-language:existentials",
+      "-Wunused:imports"
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion2,
@@ -76,12 +74,13 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .enablePlugins(SbtPlugin)
   .disablePlugins(ScalafixPlugin)
   .settings(
-    name               := "diesel-i18n-plugin",
-    scalaVersion       := "2.12.21",
-    scriptedLaunchOpts := {
+    name                      := "diesel-i18n-plugin",
+    scalaVersion              := "3.8.4",
+    scriptedLaunchOpts        := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
-    scriptedBufferLog  := false,
-    semanticdbEnabled  := false
+    scriptedKeepTempDirectory := true,
+    scriptedBufferLog         := false,
+    semanticdbEnabled         := false
   )
