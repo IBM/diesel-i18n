@@ -47,15 +47,13 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(
     scalacOptions ++= Seq(
-      // "-source:3.0",
-      // "-source:future-migration",
-      // "-rewrite",
-      // "-new-syntax",
       "-unchecked",
       "-deprecation",
       "-feature",
-      "-Xfatal-warnings",
-      "-language:existentials"
+      // "-Xfatal-warnings",
+      "-Wconf:cat=deprecation:i",
+      "-language:existentials",
+      "-Wunused:imports"
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion2,
