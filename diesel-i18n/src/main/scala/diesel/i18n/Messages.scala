@@ -16,6 +16,8 @@
 
 package diesel.i18n
 
+import scala.annotation.nowarn
+
 object Messages {
   type Lang        = Lang.Value
   private type Key = String
@@ -109,6 +111,7 @@ object Messages {
   }
 }
 
+@nowarn("msg=unused import")
 abstract class Messages {
   import Messages._
   import DeclaringSourceName.declaringSourceName
