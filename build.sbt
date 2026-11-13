@@ -6,7 +6,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import scala.sys.process._
 
 // val scalaVersion3 = "3.2.1"
-val scalaVersion2 = "2.13.18"
+val scalaVersion2 = "3.10.1"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
@@ -82,7 +82,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .disablePlugins(ScalafixPlugin)
   .settings(
     name                      := "diesel-i18n-plugin",
-    scalaVersion              := "3.8.4",
+    scalaVersion              := "3.10.1",
     scriptedLaunchOpts        := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
