@@ -50,7 +50,7 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("diesel-i18n"))
   .settings(
-    name           := "diesel-i18n"
+    name := "diesel-i18n"
   )
   .settings(
     scalacOptions ++= Seq(
