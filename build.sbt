@@ -1,5 +1,4 @@
 import sbtcrossproject.CrossType
-import org.checkerframework.checker.units.qual.C
 import sbt.{CrossVersion, ThisBuild}
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
