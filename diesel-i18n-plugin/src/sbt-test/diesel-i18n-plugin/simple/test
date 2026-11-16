@@ -10,8 +10,8 @@ $ exists target/out/jvm/scala-*/root/src_managed/main/com/myco/myapp/MyI18n.scal
 $ exists target/out/jvm/scala-*/root/src_managed/main/com/myco/myapp/MyI18n.scala
 
 # third run: re-generate with changed source
-$ copy-file target/out/jvm/scala-3.8.3/root/src_managed/main/com/myco/myapp/MyI18n.scala target/MyI18n.scala.old
+$ copy-file target/out/jvm/scala-3.8.4/root/src_managed/main/com/myco/myapp/MyI18n.scala target/MyI18n.scala.old
 $ touch src/main/i18n/Messages_de.properties
 > run
 $ exists target/out/jvm/scala-*/root/src_managed/main/com/myco/myapp/MyI18n.scala
-$ newer target/out/jvm/scala-3.8.3/root/src_managed/main/com/myco/myapp/MyI18n.scala target/MyI18n.scala.old
+$ newer target/out/jvm/scala-3.8.4/root/src_managed/main/com/myco/myapp/MyI18n.scala target/MyI18n.scala.old
