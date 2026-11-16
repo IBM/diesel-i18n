@@ -26,7 +26,14 @@ inThisBuild(Seq(
   description      := "Utilities for localizing Diesel components.",
   startYear        := Some(2021),
   organizationName := "The Diesel Authors",
-  licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+  licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+  homepage         := Some(uri("https://github.com/IBM/diesel-i18n")),
+  developers       := List(Developer(
+    "decisions-sonatype",
+    "The Diesel Authors",
+    "decisions-sonatype@ibm.com",
+    uri("https://github.com/IBM/diesel-i18n")
+  ))
 ))
 
 lazy val root: Project = project
