@@ -81,7 +81,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .disablePlugins(ScalafixPlugin)
   .settings(
     name                      := "diesel-i18n-plugin",
-    scalaVersion              := "3.8.4",
+    scalaVersion              := "3.9.0",
     scriptedLaunchOpts        := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
