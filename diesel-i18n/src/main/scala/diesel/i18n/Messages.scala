@@ -16,8 +16,6 @@
 
 package diesel.i18n
 
-import scala.annotation.nowarn
-
 object Messages {
   type Lang        = Lang.Value
   private type Key = String
@@ -111,10 +109,9 @@ object Messages {
   }
 }
 
-@nowarn("msg=unused import")
+// @nowarn("msg=unused import")
 abstract class Messages {
   import Messages._
-  import DeclaringSourceName.declaringSourceName
 
   protected def load(): Map[Lang, Map[String, MessageFormat]]
 
@@ -157,8 +154,8 @@ abstract class Messages {
     Plural(key.name, msg)
   protected def selfPlural(implicit key: DeclaringSourceName): SelfPlural = SelfPlural(key.name)
 
-  def defaultToString[T]: T => String             = { arg: T => arg.toString }
-  def commaSeparatedToString[T]: Seq[T] => String = { arg: Seq[T] => arg.mkString(", ") }
+  def defaultToString[T]: T => String             = { _.toString }
+  def commaSeparatedToString[T]: Seq[T] => String = { _.mkString(", ") }
   trait Msg {
     val resolution: Resolution
     protected def getIt(resolver: KeyResolver): MessageFormat = resolver(resolution.key)
@@ -169,17 +166,17 @@ abstract class Messages {
       ))
   }
 
-  case class Msg0 private (resolution: Resolution) extends Msg {
-    def apply()(implicit resolver: KeyResolver): String = getIt(resolver)()
+  case class Msg0 private[Messages] (resolution: Resolution) extends Msg {
+    def apply()(using resolver: KeyResolver): String = getIt(resolver)()
   }
 
-  case class Msg1[T] private (resolution: Resolution, f: (T => String) = defaultToString)
+  case class Msg1[T] private[Messages] (resolution: Resolution, f: (T => String) = defaultToString)
       extends Msg {
     def apply(arg: T)(implicit resolver: KeyResolver): String = getIt(resolver)(f(arg))
     def arg(f: T => String): Msg1[T]                          = this.copy(f = f)
   }
 
-  case class Msg2[T1, T2] private (
+  case class Msg2[T1, T2] private[Messages] (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString
@@ -190,7 +187,7 @@ abstract class Messages {
     def arg2(f: T2 => String): Msg2[T1, T2]                               = this.copy(f2 = f)
   }
 
-  case class Msg3[T1, T2, T3] private (
+  case class Msg3[T1, T2, T3] private[Messages] (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString,
@@ -203,7 +200,7 @@ abstract class Messages {
     def arg3(f: T3 => String): Msg3[T1, T2, T3]                                     = this.copy(f3 = f)
   }
 
-  case class Msg4[T1, T2, T3, T4] private (
+  case class Msg4[T1, T2, T3, T4] private[Messages] (
     resolution: Resolution,
     f1: (T1 => String) = defaultToString,
     f2: (T2 => String) = defaultToString,
@@ -218,7 +215,7 @@ abstract class Messages {
     def arg4(f: T4 => String): Msg4[T1, T2, T3, T4]                                           = this.copy(f4 = f)
   }
 
-  case class Plural[M <: Msg] private (key: String, msg: Resolution => M) {
+  case class Plural[M <: Msg] private[Messages] (key: String, msg: Resolution => M) {
     msg(Resolution(key))
     msg(Resolution(key + "_plural"))
 
@@ -231,7 +228,7 @@ abstract class Messages {
     }
   }
 
-  case class SelfPlural private (key: String) {
+  case class SelfPlural private[Messages] (key: String) {
     private val p: Plural[Msg1[Int]]                              = Plural(key, msg1(_))
     def apply(count: Int)(implicit resolver: KeyResolver): String = {
       p(count)(count)
