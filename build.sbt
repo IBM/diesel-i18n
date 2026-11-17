@@ -4,8 +4,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 import scala.sys.process._
 
-// val scalaVersion3 = "3.2.1"
-val scalaVersion2 = "2.13.18"
+lazy val scalaVersion3 = "3.9.0"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
@@ -21,7 +20,7 @@ addCommandAlias("testJS", "diesel.js/test")
 
 inThisBuild(Seq(
   organization     := "com.ibm.cloud.diesel",
-  scalaVersion     := scalaVersion2,
+  scalaVersion     := scalaVersion3,
   versionScheme    := Some("semver-spec"),
   description      := "Utilities for localizing Diesel components.",
   startYear        := Some(2021),
@@ -38,7 +37,8 @@ inThisBuild(Seq(
 
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(diesel.jvm, diesel.js, dieselI18nPlugin)
+  .aggregate(diesel.jvm, diesel.js)
+  .aggregate(dieselI18nPlugin)
   .settings(
     name           := "diesel-i18n-root",
     publish / skip := true
@@ -55,15 +55,12 @@ lazy val diesel = crossProject(JVMPlatform, JSPlatform)
     scalacOptions ++= Seq(
       "-unchecked",
       "-deprecation",
-      "-feature",
-      // "-Xfatal-warnings",
       "-Wconf:cat=deprecation:i",
       "-language:existentials",
       "-Wunused:imports"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaVersion2,
-      "org.scalameta" %% "munit"         % "1.3.6" % Test
+      "org.scalameta" %% "munit" % "1.3.6" % Test
     ),
     Test / fork        := false,
     Test / logBuffered := false
@@ -81,7 +78,7 @@ lazy val dieselI18nPlugin: Project = project.in(file("diesel-i18n-plugin"))
   .disablePlugins(ScalafixPlugin)
   .settings(
     name                      := "diesel-i18n-plugin",
-    scalaVersion              := "3.9.0",
+    scalaVersion              := scalaVersion3,
     scriptedLaunchOpts        := {
       scriptedLaunchOpts.value ++
         Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
