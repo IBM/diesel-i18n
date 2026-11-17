@@ -4,7 +4,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 import scala.sys.process._
 
-lazy val scalaVersion3 = "3.9.0"
+lazy val scalaVersion3 = "3.10.1"
 
 // CI convenience
 addCommandAlias("lint", "fmtCheck;fixCheck;headerCheckAll")
